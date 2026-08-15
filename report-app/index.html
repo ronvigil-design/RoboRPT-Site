@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>RoboRPT Security Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="top-brand">
+        <img class="brand-logo" src="../logo-roborpt.png" alt="RoboRPT security robot logo" />
+        <div class="brand-copy">
+          <div class="brand-name">ROBO <span>RPT</span></div>
+          <div class="brand-tag"><i></i> Robo Buddy ready</div>
+        </div>
+      </div>
+      <button class="new-report-icon" id="newReportTop" aria-label="Create a new security report">+</button>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="topNav">Menu <span>⌄</span></button>
+      <nav class="nav" id="topNav" aria-label="Primary navigation">
+        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="reports">Reports</button>
+        <button class="nav-item" data-view="properties">Properties</button>
+        <button class="nav-item" data-view="questions">Questions</button>
+        <button class="nav-item" data-view="hrQuestions">HR Bot</button>
+        <button class="nav-item" data-view="settings">Settings</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div class="page-heading">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSubtitle">Create clear, objective security reports faster.</p>
+      </div>
+
+      <section class="view active" id="dashboardView">
+        <article class="hero-card">
+          <div class="hero-copy">
+            <div class="eyebrow">AI REPORT ASSISTANT</div>
+            <h2>Your Report Buddy!</h2>
+            <p>Answer one question at a time. Robo Buddy organizes the facts into a clear, professional security report.</p>
+          </div>
+          <img class="robot-product-logo" src="../roborpt-workspace-robot.png" alt="RoboRPT security robot" />
+          <div class="hero-actions">
+            <button class="primary" id="startReport">Create Security Report</button>
+            <button class="secondary" id="viewReportsBtn">View Reports</button>
+          </div>
+        </article>
+
+        <div class="stats-grid" aria-label="Report activity">
+          <article class="stat-card"><span>Reports</span><strong id="reportCount">0</strong><small>Saved on this device</small></article>
+          <article class="stat-card"><span>Properties</span><strong id="propertyCount">0</strong><small>Active locations</small></article>
+          <article class="stat-card"><span>This Week</span><strong id="weekCount">0</strong><small>Reports created</small></article>
+          <article class="stat-card"><span>Completion</span><strong id="completionRate">100%</strong><small>Required sections</small></article>
+        </div>
+
+        <article class="panel recent-panel">
+          <div class="panel-head"><div><h3>Recent Reports</h3><p>Your latest incident documentation</p></div><button class="text-btn" id="seeAllReports">See all</button></div>
+          <div id="recentReports" class="list-empty">No reports yet. Start with Robo Buddy.</div>
+        </article>
+      </section>
+
+      <section class="view" id="reportsView">
+        <div class="page-actions">
+          <div><h2>Saved Reports</h2><p>Review and manage reports on this device.</p></div>
+          <button class="primary compact-action" id="newReportReports">+ New</button>
+        </div>
+        <div class="panel">
+          <div class="filters">
+            <input id="reportSearch" type="search" placeholder="Search reports..." />
+            <select id="reportFilter" aria-label="Filter reports"><option value="all">All incidents</option></select>
+          </div>
+          <div id="reportsTableWrap" class="report-list"></div>
+        </div>
+      </section>
+
+      <section class="view" id="propertiesView">
+        <div class="page-actions">
+          <div><h2>Properties</h2><p>Manage the locations where you work.</p></div>
+          <button class="primary compact-action" id="addPropertyBtn">+ Add</button>
+        </div>
+        <div id="propertiesGrid" class="property-grid"></div>
+      </section>
+
+      <section class="view" id="questionsView">
+        <div class="page-actions stacked-actions">
+          <div><h2>Questions</h2><p>Control the questions Robo Buddy asks.</p></div>
+          <button class="secondary compact-action" id="resetQuestionsBtn">Reset</button>
+        </div>
+        <div class="panel">
+          <div id="questionsList" class="questions-list"></div>
+        </div>
+      </section>
+
+      <section class="view" id="hrQuestionsView">
+        <div class="page-actions">
+          <div><h2>Ask HR Bot</h2><p>Get quick, practical workplace guidance.</p></div>
+          <button class="secondary compact-action" id="clearHrChatBtn">Clear</button>
+        </div>
+        <article class="panel hr-chat-card">
+          <div class="hr-chat-stream" id="hrChatStream" aria-live="polite"></div>
+          <div class="hr-suggestions" aria-label="Suggested HR questions">
+            <button type="button" data-hr-prompt="How should I report workplace harassment?">Report harassment</button>
+            <button type="button" data-hr-prompt="How should I handle an attendance problem?">Attendance issue</button>
+            <button type="button" data-hr-prompt="What should I do after an employee injury?">Employee injury</button>
+            <button type="button" data-hr-prompt="What should be included in an employee write-up?">Write-up process</button>
+          </div>
+          <form class="hr-chat-form" id="hrChatForm">
+            <textarea id="hrChatInput" rows="2" placeholder="Ask an HR question..." aria-label="Ask HR Bot a question" required></textarea>
+            <button class="primary" type="submit">Send</button>
+          </form>
+          <p class="hr-disclaimer">General workplace guidance only. Follow your company policy and contact a qualified HR or legal professional for decisions involving employment law.</p>
+        </article>
+      </section>
+
+      <section class="view" id="settingsView">
+        <div class="page-actions"><div><h2>Settings</h2><p>Set your report defaults.</p></div></div>
+        <form id="settingsForm" class="panel form-card">
+          <label>Officer Name<input id="officerName" placeholder="Your name" /></label>
+          <label>Company<input id="companyName" placeholder="Security company" /></label>
+          <label>Default Property<select id="defaultProperty"><option value="">None selected</option></select></label>
+          <label>Report Tone<select id="reportTone"><option value="objective">Objective and professional</option><option value="concise">Short and concise</option><option value="detailed">Detailed</option></select></label>
+          <label class="check-row"><input id="includeBullets" type="checkbox" checked /> Use Summary, Action Taken, and Results format</label>
+          <button class="primary" type="submit">Save Settings</button>
+          <div class="local-status"><span></span> Local report engine active</div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal report-modal" id="reportModal" aria-hidden="true">
+    <div class="modal-card report-modal-card">
+      <div class="modal-head">
+        <div><div class="eyebrow">ROBO BUDDY</div><h2>Create Security Report</h2></div>
+        <button class="icon-btn" data-close="reportModal" aria-label="Close report builder">×</button>
+      </div>
+      <div class="interview-layout">
+        <div class="chat-panel">
+          <div class="chat-stream" id="chatStream" aria-live="polite"></div>
+          <div class="quick-replies" id="quickReplies"></div>
+          <form class="chat-input-row" id="chatForm">
+            <textarea id="chatInput" rows="2" placeholder="Type your answer..." aria-label="Answer Robo Buddy"></textarea>
+            <button class="primary send-button" type="submit" aria-label="Send answer">↑</button>
+          </form>
+        </div>
+        <div class="report-preview">
+          <div class="preview-head"><h3>Review Report</h3><span id="reportStatus">Collecting details</span></div>
+          <div id="reportPreview" class="paper-preview">Answer Robo Buddy's questions to build your report.</div>
+          <div class="preview-actions">
+            <button class="secondary" id="copyPreview" type="button">Copy</button>
+            <button class="primary" id="saveReport" type="button" disabled>Save Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="propertyModal" aria-hidden="true">
+    <div class="modal-card small-modal">
+      <div class="modal-head"><div><div class="eyebrow">PROPERTY</div><h2>Add Property</h2></div><button class="icon-btn" data-close="propertyModal" aria-label="Close">×</button></div>
+      <form id="propertyForm" class="stack-form">
+        <label>Property Name<input id="propertyName" required placeholder="Example: Uptown Apartments" /></label>
+        <label>Address<input id="propertyAddress" placeholder="Street, city, state" /></label>
+        <label>Notes<textarea id="propertyNotes" rows="3" placeholder="Pool hours, access notes, contacts..."></textarea></label>
+        <button class="primary" type="submit">Save Property</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
