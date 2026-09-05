@@ -21,16 +21,19 @@
           return value;
         }
 
-        function accountPage(pathname) {
+        function staticPage(pathname) {
           const value = normalizedPath(pathname);
           if (value === "/sign-in") return "/sign-in/";
           if (value === "/create-account" || value === "/signup") {
             return "/create-account/";
           }
+          if (value === "/report-app" || value === "/create-report") {
+            return "/create-report/";
+          }
           return null;
         }
 
-        const initialDestination = accountPage(window.location.pathname);
+        const initialDestination = staticPage(window.location.pathname);
         if (
           initialDestination &&
           window.location.pathname !== initialDestination
@@ -64,7 +67,7 @@
             const url = new URL(link.href, window.location.href);
             if (url.origin !== window.location.origin) return;
 
-            const destination = accountPage(url.pathname);
+            const destination = staticPage(url.pathname);
             if (!destination) return;
 
             event.preventDefault();
@@ -75,7 +78,7 @@
         );
 
         window.addEventListener("popstate", () => {
-          const destination = accountPage(window.location.pathname);
+          const destination = staticPage(window.location.pathname);
           if (
             destination &&
             window.location.pathname !== destination
