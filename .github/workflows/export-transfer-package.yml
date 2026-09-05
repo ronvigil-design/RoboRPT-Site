@@ -1,0 +1,66 @@
+name: Export RoboRPT public-site transfer package
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Git branch, tag, or commit to export
+        required: false
+        default: main
+  push:
+    branches:
+      - export-transfer-package
+    paths:
+      - .github/workflows/export-transfer-package.yml
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PACKAGE_NAME: RoboRPT-Public-Site
+      SOURCE_REF: ${{ github.event_name == 'push' && github.event.before || inputs.source_ref || 'main' }}
+    steps:
+      - name: Check out the requested public-site source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_REF }}
+          fetch-depth: 0
+          lfs: true
+          submodules: recursive
+
+      - name: Build the transferable source and history package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${PACKAGE_NAME}/source"
+          git bundle create "${PACKAGE_NAME}/RoboRPT-Public-Site.git.bundle" --all
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='node_modules/' \
+            --exclude='.next/' \
+            --exclude='dist/' \
+            --exclude='out/' \
+            --exclude="${PACKAGE_NAME}/" \
+            ./ "${PACKAGE_NAME}/source/"
+          {
+            echo "Package: RoboRPT public GitHub Pages website"
+            echo "Repository: ${GITHUB_REPOSITORY}"
+            echo "Source ref: ${SOURCE_REF}"
+            echo "Source commit: $(git rev-parse HEAD)"
+            echo "Exported UTC: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "Contents: complete source tree plus a Git bundle with repository history"
+            echo "Excluded: untracked files, local environment files, dependencies, and build caches"
+          } > "${PACKAGE_NAME}/EXPORT-MANIFEST.txt"
+
+      - name: Upload public-site transfer package
+        uses: actions/upload-artifact@v4
+        with:
+          name: roborpt-public-site-transfer
+          path: RoboRPT-Public-Site
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
