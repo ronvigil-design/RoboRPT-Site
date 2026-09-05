@@ -9,6 +9,31 @@
     <meta property="og:image" content="https://roborpt.com/og.png" />
     <link rel="icon" href="/logo-roborpt.png" />
     <title>RoboRPT | Better Reports. Less Writing.</title>
+    <style>
+      .roborpt-signup-option {
+        width: 100%;
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+        text-align: center;
+      }
+
+      .roborpt-signup-option p {
+        margin: 0;
+        color: #aeb8c8;
+        font-size: 14px;
+      }
+
+      .roborpt-signup-button {
+        width: 100%;
+        min-height: 54px;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+    </style>
     <script>
       (() => {
         const legacyPrefix = "/RoboRPT-Site/";
@@ -57,6 +82,65 @@
           attributes: true,
           attributeFilter: ["src"],
         });
+      })();
+    </script>
+    <script>
+      (() => {
+        const signUpUrl = "https://app.roborpt.com/create-account";
+        let updateScheduled = false;
+
+        function isSignInPage() {
+          let pathname = window.location.pathname.replace(/\/+$/, "") || "/";
+          if (pathname.startsWith("/RoboRPT-Site/")) {
+            pathname = pathname.slice("/RoboRPT-Site".length);
+          }
+          return pathname === "/sign-in";
+        }
+
+        function addSignUpOption() {
+          updateScheduled = false;
+          const existing = document.querySelector(".roborpt-signup-option");
+
+          if (!isSignInPage()) {
+            existing?.remove();
+            return;
+          }
+
+          const panel = document.querySelector(".utility-panel");
+          const form = panel?.querySelector("form");
+          if (!panel || !form || existing) return;
+
+          const option = document.createElement("div");
+          option.className = "roborpt-signup-option";
+
+          const prompt = document.createElement("p");
+          prompt.textContent = "New to RoboRPT?";
+
+          const link = document.createElement("a");
+          link.className = "button button-secondary roborpt-signup-button";
+          link.href = signUpUrl;
+          link.textContent = "Sign Up";
+          link.setAttribute("aria-label", "Create a RoboRPT account");
+
+          option.append(prompt, link);
+          form.insertAdjacentElement("afterend", option);
+        }
+
+        function scheduleUpdate() {
+          if (updateScheduled) return;
+          updateScheduled = true;
+          queueMicrotask(addSignUpOption);
+        }
+
+        new MutationObserver(scheduleUpdate).observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("popstate", scheduleUpdate);
+        window.addEventListener("pageshow", scheduleUpdate);
+        document.addEventListener("DOMContentLoaded", scheduleUpdate, { once: true });
+        scheduleUpdate();
       })();
     </script>
     <script type="module" crossorigin src="/assets/index-DK4W5T-l.js"></script>
