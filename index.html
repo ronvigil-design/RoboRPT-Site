@@ -9,6 +9,56 @@
     <meta property="og:image" content="https://roborpt.com/og.png" />
     <link rel="icon" href="/logo-roborpt.png" />
     <title>RoboRPT | Better Reports. Less Writing.</title>
+    <script>
+      (() => {
+        const legacyPrefix = "/RoboRPT-Site/";
+
+        function repairImage(image) {
+          const source = image.getAttribute("src");
+          if (!source) return;
+
+          try {
+            const url = new URL(source, window.location.origin);
+            if (!url.pathname.startsWith(legacyPrefix)) return;
+            image.src = `/${url.pathname.slice(legacyPrefix.length)}${url.search}${url.hash}`;
+          } catch {
+            // Leave unrelated or malformed image URLs unchanged.
+          }
+        }
+
+        document.addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLImageElement) {
+              repairImage(event.target);
+            }
+          },
+          true,
+        );
+
+        const observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (mutation.type === "attributes" && mutation.target instanceof HTMLImageElement) {
+              repairImage(mutation.target);
+              continue;
+            }
+
+            for (const node of mutation.addedNodes) {
+              if (!(node instanceof Element)) continue;
+              if (node instanceof HTMLImageElement) repairImage(node);
+              node.querySelectorAll?.("img").forEach(repairImage);
+            }
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["src"],
+        });
+      })();
+    </script>
     <script type="module" crossorigin src="/assets/index-DK4W5T-l.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-1TSwjfPU.css">
   </head>
