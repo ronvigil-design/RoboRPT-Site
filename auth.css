@@ -1,0 +1,218 @@
+:root {
+  color-scheme: dark;
+  --cyan: #18c6ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #01040a;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background: #01040a;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+}
+
+.robo-auth-page {
+  position: relative;
+  min-height: 100dvh;
+  padding: 32px 18px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(8, 125, 255, .24), transparent 36%),
+    linear-gradient(180deg, #07101d 0%, #01040a 75%);
+}
+
+.robo-auth-glow {
+  position: absolute;
+  width: min(720px, 90vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(24, 198, 255, .09);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 70px rgba(24, 198, 255, .025),
+    0 0 0 140px rgba(8, 125, 255, .018);
+  pointer-events: none;
+}
+
+.robo-auth-card {
+  position: relative;
+  width: min(100%, 520px);
+  padding: clamp(27px, 7vw, 46px);
+  display: grid;
+  justify-items: center;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 25px;
+  background: linear-gradient(180deg, rgba(21, 31, 45, .97), rgba(8, 13, 21, .98));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .48);
+  text-align: center;
+}
+
+.robo-auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.robo-auth-brand img {
+  width: 62px;
+  height: 62px;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 18px rgba(8, 125, 255, .25));
+}
+
+.robo-auth-brand span {
+  font-size: 23px;
+  letter-spacing: -1px;
+}
+
+.robo-auth-brand b {
+  font-weight: 850;
+}
+
+.robo-auth-brand em {
+  color: #087dff;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.robo-auth-kicker {
+  margin-top: 31px;
+  color: #18c6ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.45px;
+}
+
+.robo-auth-card h1 {
+  max-width: 430px;
+  margin: 11px 0 12px;
+  font-size: clamp(30px, 7vw, 45px);
+  line-height: 1.02;
+  letter-spacing: -1.8px;
+}
+
+.robo-auth-lede {
+  max-width: 430px;
+  margin: 0;
+  color: #b6c2cf;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.robo-auth-actions {
+  width: 100%;
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.robo-auth-primary,
+.robo-auth-secondary {
+  min-height: 50px;
+  padding: 13px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.robo-auth-primary {
+  margin-top: 25px;
+  border: 1px solid rgba(24, 198, 255, .28);
+  background: linear-gradient(135deg, #087dff, #075bd8);
+  box-shadow: 0 13px 30px rgba(8, 125, 255, .23);
+}
+
+.robo-auth-actions .robo-auth-primary {
+  margin-top: 0;
+}
+
+.robo-auth-wide {
+  width: 100%;
+}
+
+.robo-auth-secondary {
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: #202b39;
+}
+
+.robo-auth-primary:hover,
+.robo-auth-secondary:hover {
+  filter: brightness(1.08);
+}
+
+.robo-auth-privacy {
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px 16px;
+  border: 1px solid rgba(80, 216, 144, .13);
+  border-radius: 13px;
+  background: rgba(80, 216, 144, .045);
+  text-align: left;
+}
+
+.robo-auth-privacy strong {
+  color: #c9f4dd;
+  font-size: 12px;
+}
+
+.robo-auth-privacy p {
+  margin: 5px 0 0;
+  color: #9fb0bf;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.robo-auth-back {
+  margin-top: 20px;
+  color: #92a4b6;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.robo-auth-back:hover {
+  color: #18c6ff;
+}
+
+@media (max-width: 520px) {
+  .robo-auth-page {
+    padding: 18px 12px;
+  }
+
+  .robo-auth-card {
+    border-radius: 20px;
+  }
+
+  .robo-auth-actions {
+    grid-template-columns: 1fr;
+  }
+}
