@@ -11,6 +11,7 @@
     <title>RoboRPT | Better Reports. Less Writing.</title>
     <script>
       (() => {
+        const appOrigin = "https://app.roborpt.com";
         const legacyPrefix = "/RoboRPT-Site";
 
         function normalizedPath(pathname) {
@@ -21,27 +22,51 @@
           return value;
         }
 
-        function staticPage(pathname) {
+        function appDestination(pathname) {
           const value = normalizedPath(pathname);
-          if (value === "/sign-in") return "/sign-in/";
+          if (value === "/sign-in") return `${appOrigin}/sign-in`;
           if (value === "/create-account" || value === "/signup") {
-            return "/create-account/";
+            return `${appOrigin}/create-account`;
           }
           if (value === "/report-app" || value === "/create-report") {
-            return "/create-report/";
+            return `${appOrigin}/report-app`;
           }
           return null;
         }
 
-        const initialDestination = staticPage(window.location.pathname);
-        if (
-          initialDestination &&
-          window.location.pathname !== initialDestination
-        ) {
+        function destinationWithSuffix(destination, sourceUrl) {
+          return `${destination}${sourceUrl.search}${sourceUrl.hash}`;
+        }
+
+        const initialDestination = appDestination(window.location.pathname);
+        if (initialDestination) {
           window.location.replace(
             `${initialDestination}${window.location.search}${window.location.hash}`,
           );
           return;
+        }
+
+        function rewriteLink(link) {
+          const rawHref = link.getAttribute("href");
+          if (!rawHref || rawHref.startsWith("#")) return;
+
+          let url;
+          try {
+            url = new URL(rawHref, window.location.href);
+          } catch {
+            return;
+          }
+
+          if (url.origin !== window.location.origin) return;
+          const destination = appDestination(url.pathname);
+          if (!destination) return;
+
+          link.href = destinationWithSuffix(destination, url);
+        }
+
+        function rewriteLinks(root) {
+          if (root instanceof HTMLAnchorElement) rewriteLink(root);
+          root.querySelectorAll?.("a[href]").forEach(rewriteLink);
         }
 
         document.addEventListener(
@@ -64,30 +89,56 @@
             if (!link || link.hasAttribute("download")) return;
             if (link.target && link.target !== "_self") return;
 
-            const url = new URL(link.href, window.location.href);
-            if (url.origin !== window.location.origin) return;
+            let url;
+            try {
+              url = new URL(link.href, window.location.href);
+            } catch {
+              return;
+            }
 
-            const destination = staticPage(url.pathname);
+            if (
+              url.origin !== window.location.origin &&
+              url.origin !== appOrigin
+            ) {
+              return;
+            }
+
+            const destination = appDestination(url.pathname);
             if (!destination) return;
 
             event.preventDefault();
             event.stopImmediatePropagation();
-            window.location.assign(`${destination}${url.search}${url.hash}`);
+            window.location.assign(destinationWithSuffix(destination, url));
           },
           true,
         );
 
-        window.addEventListener("popstate", () => {
-          const destination = staticPage(window.location.pathname);
-          if (
-            destination &&
-            window.location.pathname !== destination
-          ) {
-            window.location.replace(
-              `${destination}${window.location.search}${window.location.hash}`,
-            );
+        new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (
+              mutation.type === "attributes" &&
+              mutation.target instanceof HTMLAnchorElement
+            ) {
+              rewriteLink(mutation.target);
+              continue;
+            }
+
+            for (const node of mutation.addedNodes) {
+              if (node instanceof Element) rewriteLinks(node);
+            }
           }
+        }).observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["href"],
         });
+
+        document.addEventListener(
+          "DOMContentLoaded",
+          () => rewriteLinks(document),
+          { once: true },
+        );
       })();
     </script>
     <script>
