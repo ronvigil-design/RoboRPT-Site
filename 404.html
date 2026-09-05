@@ -9,31 +9,84 @@
     <meta property="og:image" content="https://roborpt.com/og.png" />
     <link rel="icon" href="/logo-roborpt.png" />
     <title>RoboRPT | Better Reports. Less Writing.</title>
-    <style>
-      .roborpt-signup-option {
-        width: 100%;
-        margin-top: 14px;
-        display: grid;
-        gap: 10px;
-        text-align: center;
-      }
+    <script>
+      (() => {
+        const legacyPrefix = "/RoboRPT-Site";
 
-      .roborpt-signup-option p {
-        margin: 0;
-        color: #aeb8c8;
-        font-size: 14px;
-      }
+        function normalizedPath(pathname) {
+          let value = pathname.replace(/\/+$/, "") || "/";
+          if (value.startsWith(`${legacyPrefix}/`)) {
+            value = value.slice(legacyPrefix.length) || "/";
+          }
+          return value;
+        }
 
-      .roborpt-signup-button {
-        width: 100%;
-        min-height: 54px;
-        box-sizing: border-box;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-      }
-    </style>
+        function accountPage(pathname) {
+          const value = normalizedPath(pathname);
+          if (value === "/sign-in") return "/sign-in/";
+          if (value === "/create-account" || value === "/signup") {
+            return "/create-account/";
+          }
+          return null;
+        }
+
+        const initialDestination = accountPage(window.location.pathname);
+        if (
+          initialDestination &&
+          window.location.pathname !== initialDestination
+        ) {
+          window.location.replace(
+            `${initialDestination}${window.location.search}${window.location.hash}`,
+          );
+          return;
+        }
+
+        document.addEventListener(
+          "click",
+          (event) => {
+            if (
+              event.button !== 0 ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            ) {
+              return;
+            }
+
+            const link =
+              event.target instanceof Element
+                ? event.target.closest("a[href]")
+                : null;
+            if (!link || link.hasAttribute("download")) return;
+            if (link.target && link.target !== "_self") return;
+
+            const url = new URL(link.href, window.location.href);
+            if (url.origin !== window.location.origin) return;
+
+            const destination = accountPage(url.pathname);
+            if (!destination) return;
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            window.location.assign(`${destination}${url.search}${url.hash}`);
+          },
+          true,
+        );
+
+        window.addEventListener("popstate", () => {
+          const destination = accountPage(window.location.pathname);
+          if (
+            destination &&
+            window.location.pathname !== destination
+          ) {
+            window.location.replace(
+              `${destination}${window.location.search}${window.location.hash}`,
+            );
+          }
+        });
+      })();
+    </script>
     <script>
       (() => {
         const legacyPrefix = "/RoboRPT-Site/";
@@ -63,7 +116,10 @@
 
         const observer = new MutationObserver((mutations) => {
           for (const mutation of mutations) {
-            if (mutation.type === "attributes" && mutation.target instanceof HTMLImageElement) {
+            if (
+              mutation.type === "attributes" &&
+              mutation.target instanceof HTMLImageElement
+            ) {
               repairImage(mutation.target);
               continue;
             }
@@ -84,67 +140,8 @@
         });
       })();
     </script>
-    <script>
-      (() => {
-        const signUpUrl = "https://app.roborpt.com/create-account";
-        let updateScheduled = false;
-
-        function isSignInPage() {
-          let pathname = window.location.pathname.replace(/\/+$/, "") || "/";
-          if (pathname.startsWith("/RoboRPT-Site/")) {
-            pathname = pathname.slice("/RoboRPT-Site".length);
-          }
-          return pathname === "/sign-in";
-        }
-
-        function addSignUpOption() {
-          updateScheduled = false;
-          const existing = document.querySelector(".roborpt-signup-option");
-
-          if (!isSignInPage()) {
-            existing?.remove();
-            return;
-          }
-
-          const panel = document.querySelector(".utility-panel");
-          const form = panel?.querySelector("form");
-          if (!panel || !form || existing) return;
-
-          const option = document.createElement("div");
-          option.className = "roborpt-signup-option";
-
-          const prompt = document.createElement("p");
-          prompt.textContent = "New to RoboRPT?";
-
-          const link = document.createElement("a");
-          link.className = "button button-secondary roborpt-signup-button";
-          link.href = signUpUrl;
-          link.textContent = "Sign Up";
-          link.setAttribute("aria-label", "Create a RoboRPT account");
-
-          option.append(prompt, link);
-          form.insertAdjacentElement("afterend", option);
-        }
-
-        function scheduleUpdate() {
-          if (updateScheduled) return;
-          updateScheduled = true;
-          queueMicrotask(addSignUpOption);
-        }
-
-        new MutationObserver(scheduleUpdate).observe(document.documentElement, {
-          childList: true,
-          subtree: true,
-        });
-
-        window.addEventListener("popstate", scheduleUpdate);
-        window.addEventListener("pageshow", scheduleUpdate);
-        document.addEventListener("DOMContentLoaded", scheduleUpdate, { once: true });
-        scheduleUpdate();
-      })();
-    </script>
     <script type="module" crossorigin src="/assets/index-DK4W5T-l.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-1TSwjfPU.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-1TSwjfPU.css" />
   </head>
   <body>
     <div id="root"></div>
